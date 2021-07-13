@@ -2,8 +2,10 @@ import pygame #pygame for window
 import tkinter
 from tkinter import * #tkinter for popups
 from tkinter import ttk
+from tkinter.ttk import *
 from tkinter import messagebox
 import math
+
 
 #this is the screen
 #(width, height)
@@ -22,10 +24,29 @@ def grid():
             rect = pygame.Rect(x, y, squaresize, squaresize)
             pygame.draw.rect(screen, white, rect, 1)
 
-#opening message
-def message():
-    messagebox.showinfo("Information","Informative message")
-    
+#``````````Widget``````````
+root = Tk() 
+label = tkinter.Label(root, text= "hello")
+root.geometry('500x500')
+
+#Choice box
+choices = ["", "a*", "bruh"]
+variable = StringVar(root)
+variable.set("")
+menu = OptionMenu(root, variable, *choices)
+menu.pack()
+
+#Button
+def choice():
+    selection = variable.get()
+button = Button(root, text="OK", command=choice)
+button.pack()
+
+
+root.mainloop()
+
+def astar():
+    print ("e") 
 
 running = True
 # game loop
