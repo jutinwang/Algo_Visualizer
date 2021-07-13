@@ -9,26 +9,32 @@ import math
 
 #this is the screen
 #(width, height)
-screen = pygame.display.set_mode((800,800))
+screen = pygame.display.set_mode((500,500))
 width = 1000
 height = 800
 white = (200, 200, 200)
 green = (0, 128, 0)
+red = (255, 0, 0)
 
 
 #~~~~~~~~~creating a grid~~~~~~~~~
 def grid():
     #sets the squaresize to 20, with the grid size, it makes a 40x40 grid
-    squaresize = 20
+    squaresize = 10
     for x in range(0, width, squaresize):
         for y in range (0, height, squaresize):
             rect = pygame.Rect(x, y, squaresize, squaresize)
             pygame.draw.rect(screen, white, rect, 1)
 
 def placeblock():
-    squaresize = 20
+    squaresize = 10
     start = pygame.Rect(1, 1, squaresize, squaresize )
     pygame.draw.rect(screen, green, start, 0)
+
+def placeend():
+    squaresize = 10
+    start = pygame.Rect( 350, 220, squaresize, squaresize)
+    pygame.draw.rect(screen, red, start, 0)
 
 #~~~~~~~~~Widget~~~~~~~~~
 root = Tk() 
@@ -75,6 +81,7 @@ while running:
     pygame.display.flip() #displays the screen
     grid() #displays the grid
     placeblock()
+    placeend()
 # for loop through the event queue  
     for event in pygame.event.get():
         # Check for QUIT event      
