@@ -43,6 +43,7 @@ button = Button(root, text="OK", command=choice)
 button.pack()
 
 #text input
+#still doesn't look good but it functionally works
 s1 = Label(root, text = "Position of starting node")
 s1.pack(side = LEFT)
 a1 = Entry(root)
