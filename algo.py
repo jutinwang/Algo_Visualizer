@@ -13,6 +13,7 @@ screen = pygame.display.set_mode((800,800))
 width = 1000
 height = 800
 white = (200, 200, 200)
+green = (0, 128, 0)
 
 
 #~~~~~~~~~creating a grid~~~~~~~~~
@@ -23,7 +24,7 @@ def grid():
         for y in range (0, height, squaresize):
             rect = pygame.Rect(x, y, squaresize, squaresize)
             pygame.draw.rect(screen, white, rect, 1)
-            
+
 def placeblock():
     squaresize = 20
     start = pygame.Rect(1, 1, squaresize, squaresize )
@@ -48,7 +49,6 @@ button = Button(root, text="OK", command=choice)
 button.pack()
 
 #text input
-#still doesn't look good but it functionally works
 s1 = Label(root, text = "Position of starting node")
 s1.pack(side = LEFT)
 a1 = Entry(root)
@@ -74,6 +74,7 @@ running = True
 while running:
     pygame.display.flip() #displays the screen
     grid() #displays the grid
+    placeblock()
 # for loop through the event queue  
     for event in pygame.event.get():
         # Check for QUIT event      
