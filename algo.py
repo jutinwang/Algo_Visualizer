@@ -23,6 +23,11 @@ def grid():
         for y in range (0, height, squaresize):
             rect = pygame.Rect(x, y, squaresize, squaresize)
             pygame.draw.rect(screen, white, rect, 1)
+            
+def placeblock():
+    squaresize = 20
+    start = pygame.Rect(1, 1, squaresize, squaresize )
+    pygame.draw.rect(screen, green, start, 0)
 
 #~~~~~~~~~Widget~~~~~~~~~
 root = Tk() 
