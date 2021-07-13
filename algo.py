@@ -15,7 +15,7 @@ height = 800
 white = (200, 200, 200)
 
 
-#creating a grid
+#~~~~~~~~~creating a grid~~~~~~~~~
 def grid():
     #sets the squaresize to 20, with the grid size, it makes a 40x40 grid
     squaresize = 20
@@ -24,36 +24,50 @@ def grid():
             rect = pygame.Rect(x, y, squaresize, squaresize)
             pygame.draw.rect(screen, white, rect, 1)
 
-#``````````Widget``````````
+#~~~~~~~~~Widget~~~~~~~~~
 root = Tk() 
 label = tkinter.Label(root, text= "hello")
 root.geometry('500x500')
 
 #Choice box
-choices = ["", "a*", "bruh"]
-variable = StringVar(root)
-variable.set("")
-menu = OptionMenu(root, variable, *choices)
-menu.pack()
+choices = ["", "a*", "bruh"] #options for the drop menu
+variable = StringVar(root) 
+variable.set("") #set the default option for the menu as blank
+menu = OptionMenu(root, variable, *choices) #OptionMenu function
+menu.pack() 
 
 #Button
-def choice():
-    selection = variable.get()
+def choice(): #function
+    selection = variable.get() #selection variable gets the value of the option chosen
 button = Button(root, text="OK", command=choice)
 button.pack()
 
+#text input
+s1 = Label(root, text = "Position of starting node")
+s1.pack(side = LEFT)
+a1 = Entry(root)
+a1.pack(side = RIGHT)
+
+space = Label(root, text = "\n")
+space.pack()
+
+s2 = Label(root, text = "Position of end node")
+s2.pack(side = LEFT)
+a2 = Entry(root)
+a2.pack(side = RIGHT)
 
 root.mainloop()
 
+#~~~~~~~~~algo~~~~~~~~~
 def astar():
     print ("e") 
 
+#~~~~~~~~~main pygame screen~~~~~~~~~
 running = True
 # game loop
 while running:
-    pygame.display.flip()
-    #message()
-    grid()
+    pygame.display.flip() #displays the screen
+    grid() #displays the grid
 # for loop through the event queue  
     for event in pygame.event.get():
         # Check for QUIT event      
