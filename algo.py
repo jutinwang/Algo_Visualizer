@@ -10,8 +10,8 @@ import math
 #this is the screen
 #(width, height)
 screen = pygame.display.set_mode((500,500))
-width = 1000
-height = 800
+width = 500
+height = 500
 white = (200, 200, 200)
 green = (0, 128, 0)
 red = (255, 0, 0)
@@ -28,7 +28,7 @@ def grid():
 
 def placeblock():
     squaresize = 10
-    start = pygame.Rect(1, 1, squaresize, squaresize )
+    start = pygame.Rect(0, 0, squaresize, squaresize )
     pygame.draw.rect(screen, green, start, 0)
 
 def placeend():
