@@ -4,10 +4,8 @@ from tkinter import * #tkinter for popups
 from tkinter import ttk
 from tkinter.ttk import *
 from tkinter import messagebox
-import math
 
-
-#this is the screen
+#~~~~~~~~~this is the screen~~~~~~~~~
 #(width, height)
 screen = pygame.display.set_mode((500,500))
 width = 500
@@ -15,7 +13,6 @@ height = 500
 white = (200, 200, 200)
 green = (0, 128, 0)
 red = (255, 0, 0)
-
 
 #~~~~~~~~~creating a grid~~~~~~~~~
 def grid():
@@ -25,6 +22,13 @@ def grid():
         for y in range (0, height, squaresize):
             rect = pygame.Rect(x, y, squaresize, squaresize)
             pygame.draw.rect(screen, white, rect, 1)
+
+#creating a 2d array for each spot on the grid
+twodgrid = []
+for row in range(50):
+    twodgrid.append([])
+    for column in range(50):
+        twodgrid[row].append(0)
 
 def placeblock():
     squaresize = 10
@@ -36,6 +40,10 @@ def placeend():
     start = pygame.Rect( 350, 220, squaresize, squaresize)
     pygame.draw.rect(screen, red, start, 0)
 
+def placenew(coorx, coory):
+    squaresize = 10
+    start = pygame.Rect(coorx, coory, squaresize, squaresize)
+    pygame.draw.rect(screen, white, start, 0)
 #~~~~~~~~~Widget~~~~~~~~~
 root = Tk() 
 label = tkinter.Label(root, text= "hello")
@@ -80,8 +88,18 @@ running = True
 while running:
     pygame.display.flip() #displays the screen
     grid() #displays the grid
-    placeblock()
-    placeend()
+    placeblock() #places green block
+    placeend() # places red block
+    ev = pygame.event.get()
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    for event in ev:
+        if event.type == pygame.MOUSEBUTTONUP: #press mouse
+            pos = pygame.mouse.get_pos()#gets the position of click
+            x = pos[0]
+            y = pos[1]
+            placenew(x,y)
+            print (pos) 
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # for loop through the event queue  
     for event in pygame.event.get():
         # Check for QUIT event      
