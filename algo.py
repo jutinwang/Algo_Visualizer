@@ -4,46 +4,40 @@ from tkinter import * #tkinter for popups
 from tkinter import ttk
 from tkinter.ttk import *
 from tkinter import messagebox
+import math
 
 #~~~~~~~~~this is the screen~~~~~~~~~
 #(width, height)
 screen = pygame.display.set_mode((500,500))
 width = 500
 height = 500
+squaresize = 10
 white = (200, 200, 200)
 green = (0, 128, 0)
 red = (255, 0, 0)
 
-#~~~~~~~~~creating a grid~~~~~~~~~
-def grid():
-    #sets the squaresize to 20, with the grid size, it makes a 40x40 grid
-    squaresize = 10
-    for x in range(0, width, squaresize):
-        for y in range (0, height, squaresize):
-            rect = pygame.Rect(x, y, squaresize, squaresize)
-            pygame.draw.rect(screen, white, rect, 1)
-
+#~~~~~~~~~creating a grid~~~~~~~~~~~
 #creating a 2d array for each spot on the grid
-twodgrid = []
-for row in range(50):
-    twodgrid.append([])
-    for column in range(50):
-        twodgrid[row].append(0)
+rect_map = {}
+rect_matrix = []
 
+for rows in range(50):
+    twodgrid = []
+    for columns in range(50):
+        twodgrid.append(pygame.Rect((columns * squaresize, rows * squaresize), (squaresize, squaresize)))
+        rect_map[(columns, rows)] = 1
+    rect_matrix.append(twodgrid)
+    
+
+#~~~~~~~~~Blocks~~~~~~~~~
 def placeblock():
-    squaresize = 10
-    start = pygame.Rect(0, 0, squaresize, squaresize )
-    pygame.draw.rect(screen, green, start, 0)
+    start = (0,0) #custom cooridnates use () brackets
+    rect_map[start] = 0
 
-def placeend():
-    squaresize = 10
-    start = pygame.Rect( 350, 220, squaresize, squaresize)
-    pygame.draw.rect(screen, red, start, 0)
+def placeend(): 
+    end = (10, 10)
+    rect_map[end] = 0
 
-def placenew(coorx, coory):
-    squaresize = 10
-    start = pygame.Rect(coorx, coory, squaresize, squaresize)
-    pygame.draw.rect(screen, white, start, 0)
 #~~~~~~~~~Widget~~~~~~~~~
 root = Tk() 
 label = tkinter.Label(root, text= "hello")
@@ -87,7 +81,6 @@ running = True
 # game loop
 while running:
     pygame.display.flip() #displays the screen
-    grid() #displays the grid
     placeblock() #places green block
     placeend() # places red block
     ev = pygame.event.get()
@@ -95,13 +88,20 @@ while running:
     for event in ev:
         if event.type == pygame.MOUSEBUTTONUP: #press mouse
             pos = pygame.mouse.get_pos()#gets the position of click
-            x = pos[0]
-            y = pos[1]
-            placenew(x,y)
-            print (pos) 
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# for loop through the event queue  
-    for event in pygame.event.get():
-        # Check for QUIT event      
+            gridpos = pos[0] // squaresize, pos[1] // squaresize
+            if rect_map[gridpos] == 1:
+                rect_map[gridpos] = 0
+            else:
+                rect_map[gridpos] = 1
+
         if event.type == pygame.QUIT:
             running = False
+
+    screen.fill((0,0,0))
+
+    for i, ii in zip(rect_matrix, range(len(rect_matrix))):
+        for j, jj  in zip(i, range(len(i))):
+            pygame.draw.rect(screen, (100,100,100), j, rect_map[(jj, ii)])
+
+    pygame.display.update()
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
