@@ -15,6 +15,8 @@ squaresize = 10
 white = (200, 200, 200)
 green = (0, 128, 0)
 red = (255, 0, 0)
+start = (0,0)
+end = (0,0)
 
 #~~~~~~~~~creating a grid~~~~~~~~~~~
 #creating a 2d array for each spot on the grid
@@ -28,7 +30,6 @@ for rows in range(50):
         rect_map[(columns, rows)] = 1
     rect_matrix.append(twodgrid)
     
-
 #~~~~~~~~~Blocks~~~~~~~~~
 def placeblock():
     start = (0,0) #custom cooridnates use () brackets
@@ -41,7 +42,7 @@ def placeend():
 #~~~~~~~~~Widget~~~~~~~~~
 root = Tk() 
 label = tkinter.Label(root, text= "hello")
-root.geometry('500x500')
+root.geometry('400x400')
 
 #Choice box
 choices = ["", "a*", "bruh"] #options for the drop menu
@@ -50,27 +51,25 @@ variable.set("") #set the default option for the menu as blank
 menu = OptionMenu(root, variable, *choices) #OptionMenu function
 menu.pack() 
 
-#Button
-def choice(): #function
-    selection = variable.get() #selection variable gets the value of the option chosen
-button = Button(root, text="OK", command=choice)
-button.pack()
-
 #text input
 s1 = Label(root, text = "Position of starting node")
 s1.pack(side = LEFT)
 a1 = Entry(root)
 a1.pack(side = RIGHT)
 
-space = Label(root, text = "\n")
-space.pack()
+def choice(): #function
+    selection = variable.get() #selection variable gets the value of the option chosen
+    print (selection)
+    choice1 = a1.get()
+    print (choice1)
+    start = rect_matrix[int(choice1[0])][int(choice1[1])]
 
-s2 = Label(root, text = "Position of end node")
-s2.pack(side = LEFT)
-a2 = Entry(root)
-a2.pack(side = RIGHT)
+    root.destroy()
+button = Button(root, text="OK", command=choice)
+button.pack(side = BOTTOM)
 
 root.mainloop()
+
 
 #~~~~~~~~~algo~~~~~~~~~
 def astar():
