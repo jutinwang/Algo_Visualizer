@@ -35,8 +35,8 @@ def placeblock(x, y):
     start = (x,y) #custom cooridnates use () brackets
     rect_map[start] = 0
 
-def placeend(): 
-    end = (10, 10)
+def placeend(x2, y2): 
+    end = (x2, y2)
     rect_map[end] = 0
 
 #~~~~~~~~~Widget~~~~~~~~~
@@ -45,18 +45,21 @@ label = tkinter.Label(root, text= "hello")
 root.geometry('400x400')
 
 #Choice box
-#choices = ["", "a*", "bruh"] #options for the drop menu
-#variable = StringVar(root) 
-#variable.set("") #set the default option for the menu as blank
-#menu = OptionMenu(root, variable, *choices) #OptionMenu function
-#menu.pack() 
+choices = ["", "a*", "bruh"] #options for the drop menu
+variable = StringVar(root) 
+variable.set("") #set the default option for the menu as blank
+menu = OptionMenu(root, variable, *choices) #OptionMenu function
+menu.grid(column = 3, row = 14) 
 
 #text input
-s1 = Label(root, text = "Position of starting node")
+s1 = Label(root, text = "Position of starting node (0-49)")
 s2 = Label(root, text = "Position of ending node")
-s1.pack(side = LEFT)
+s1.grid(column = 0, row = 0)
+s2.grid(column = 0, row = 1)
 a1 = Entry(root)
-a1.pack(side = RIGHT)
+a2 = Entry(root)
+a1.grid(column = 5, row = 0)
+a2.grid(column = 5, row = 1)
 
 def choice(): #function
     #selection = variable.get() #selection variable gets the value of the option chosen
@@ -66,12 +69,24 @@ def choice(): #function
     start = (int(choice1[0]),int(choice1[1]))
     root.quit()
     return (start)
-    root.destroy()
 
-button = Button(root, text="OK", command=choice)
-button.pack(side = BOTTOM)
+def choice2():
+    choice2 = a2.get().split(',')
+    print (choice2[0])
+    end = (int(choice2[0]), int(choice2[1]))
+    root.quit()
+    return (end)
+
+button = Button(root, text="START", command=choice)
+button.grid(column = 3, row = 5)
+
+button2 = Button(root, text="END", command = choice2)
+button2.grid(column = 5, row = 5)
+
+
 root.mainloop()
 bruh = choice() #takes the variable from the function
+bruh2 = choice2()
 
 #~~~~~~~~~Widget 2~~~~~~~~~
 
@@ -86,7 +101,7 @@ running = True
 while running:
     pygame.display.flip() #displays the screen
     placeblock(bruh[0], bruh[1]) #places start block
-    placeend() # places end block
+    placeend(bruh2[0], bruh2[1]) # places end block
     ev = pygame.event.get()
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     for event in ev:
