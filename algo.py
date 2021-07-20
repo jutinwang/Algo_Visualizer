@@ -49,33 +49,38 @@ choices = ["", "a*", "bruh"] #options for the drop menu
 variable = StringVar(root) 
 variable.set("") #set the default option for the menu as blank
 menu = OptionMenu(root, variable, *choices) #OptionMenu function
-menu.grid(column = 3, row = 14) 
+menu.grid(column = 3, row = 6) 
 
 #text input
 s1 = Label(root, text = "Position of starting node (0-49)")
-s2 = Label(root, text = "Position of ending node")
+s2 = Label(root, text = "Position of ending node (0-49)")
 s1.grid(column = 0, row = 0)
 s2.grid(column = 0, row = 1)
+
+#stores answers 
 a1 = Entry(root)
 a2 = Entry(root)
 a1.grid(column = 5, row = 0)
 a2.grid(column = 5, row = 1)
 
 def choice(): #function
-    #selection = variable.get() #selection variable gets the value of the option chosen
-   # print (selection)
     choice1 = a1.get().split(',')
     print (choice1[1])
     start = (int(choice1[0]),int(choice1[1]))
-    root.quit()
+    #root.quit()
     return (start)
 
 def choice2():
     choice2 = a2.get().split(',')
     print (choice2[0])
     end = (int(choice2[0]), int(choice2[1]))
-    root.quit()
+    #root.quit()
     return (end)
+
+def algochoice():
+   selection = variable.get() #selection variable gets the value of the option chosen
+   root.quit()
+   return (selection)
 
 button = Button(root, text="START", command=choice)
 button.grid(column = 3, row = 5)
@@ -83,6 +88,8 @@ button.grid(column = 3, row = 5)
 button2 = Button(root, text="END", command = choice2)
 button2.grid(column = 5, row = 5)
 
+button3 = Button(root, text="OK", command = algochoice)
+button3.grid(column = 4, row = 7)
 
 root.mainloop()
 bruh = choice() #takes the variable from the function
