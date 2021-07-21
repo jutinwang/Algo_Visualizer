@@ -5,6 +5,7 @@ from tkinter import ttk
 from tkinter.ttk import *
 from tkinter import messagebox
 import math
+from queue import PriorityQueue
 
 #~~~~~~~~~this is the screen~~~~~~~~~
 #(width, height)
@@ -13,7 +14,7 @@ width = 500
 height = 500
 squaresize = 10
 white = (200, 200, 200)
-green = (0, 128, 0)
+green = (0, 255, 0)
 red = (255, 0, 0)
 start = (0,0)
 end = (0,0)
@@ -99,8 +100,14 @@ bruh2 = choice2()
 
 
 #~~~~~~~~~algo~~~~~~~~~
+openlist = []
+closedlist = []
+openlist.append(start)
+
 def astar():
-    print ("e") 
+    while len(openlist) > 0:
+        smallestindex = bruh
+        
 
 #~~~~~~~~~main pygame screen~~~~~~~~~
 running = True
@@ -127,7 +134,12 @@ while running:
 
     for i, ii in zip(rect_matrix, range(len(rect_matrix))):
         for j, jj  in zip(i, range(len(i))):
-            pygame.draw.rect(screen, (100,100,100), j, rect_map[(jj, ii)])
+            if jj == bruh[0] and ii == bruh[1]:
+                pygame.draw.rect(screen, green, j, rect_map[(jj, ii)]) #sets colour of start block to green
+            elif jj == bruh2[0] and ii == bruh2[1]:
+                pygame.draw.rect(screen, red, j, rect_map[(jj, ii)]) #sets colour of end block to red
+            else:     
+                pygame.draw.rect(screen, (100,100,100), j, rect_map[(jj, ii)]) #sets colours of blocks to gray
 
     pygame.display.update()
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
