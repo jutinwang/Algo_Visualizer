@@ -95,14 +95,25 @@ button3.grid(column = 4, row = 7)
 root.mainloop()
 bruh = choice() #takes the variable from the function
 bruh2 = choice2()
-
+if bruh[0] == bruh2[0] and bruh[1] == bruh2[1]:
+    bruht = list(bruh2)
+    if bruht[0] > 39:
+        bruht[0] -= 10
+        bruh2 = tuple(bruht)
+    elif bruht[1] > 39:
+        bruht[1] -= 10
+        bruh2 = tuple(bruht)
+    else:
+        bruht[0] += 10
+        bruht[1] += 10
+        bruh2 = tuple(bruht)
 #~~~~~~~~~Widget 2~~~~~~~~~
 
 
 #~~~~~~~~~algo~~~~~~~~~
 openlist = []
 closedlist = []
-openlist.append(start)
+#openlist = openlist.head
 
 def astar():
     while len(openlist) > 0:
@@ -112,14 +123,21 @@ def astar():
 #~~~~~~~~~main pygame screen~~~~~~~~~
 running = True
 # game loop
+destroyed = False
 while running:
+    while destroyed == False:
+        root.destroy()
+        destroyed = True
     pygame.display.flip() #displays the screen
     placeblock(bruh[0], bruh[1]) #places start block
     placeend(bruh2[0], bruh2[1]) # places end block
     ev = pygame.event.get()
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     for event in ev:
-        if event.type == pygame.MOUSEBUTTONUP: #press mouse
+        if event.type == pygame.QUIT:
+            running = False
+            
+        if pygame.mouse.get_pressed()[0]: #press mouse
             pos = pygame.mouse.get_pos()#gets the position of click
             gridpos = pos[0] // squaresize, pos[1] // squaresize
             if rect_map[gridpos] == 1:
@@ -127,8 +145,6 @@ while running:
             else:
                 rect_map[gridpos] = 1
 
-        if event.type == pygame.QUIT:
-            running = False
 
     screen.fill((0,0,0))
 
