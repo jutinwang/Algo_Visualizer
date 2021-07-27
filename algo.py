@@ -20,7 +20,6 @@ red = (255, 0, 0)
 blue = (0,0,255)
 gray = (100,100,100)
 black = (0,0,0)
-yellow = (255,255,0)
 
 class Squares:
     def __init__(self, row, col, width, total_rows):
@@ -29,7 +28,7 @@ class Squares:
         self.x = row * width
         self.y = col * width
         self.color = black #controls background color
-        self.besides = []
+        self.beside = []
         self.width = width
         self.total_rows = total_rows
     
@@ -53,88 +52,87 @@ class Squares:
 
     def make_closed(self):
         self.color = blue
-
-    def make_path(self):
-        self.color = yellow
     
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.width))
     
     def update_neighbors(self, grid):
-        self.besides = []
+        self.beside = []
         if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_wall(): # DOWN
-            self.besides.append(grid[self.row + 1][self.col])
+            self.beside.append(grid[self.row + 1][self.col])
 
         if self.row > 0 and not grid[self.row - 1][self.col].is_wall(): # UP
-            self.besides.append(grid[self.row - 1][self.col])
+            self.beside.append(grid[self.row - 1][self.col])
 
         if self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_wall(): # RIGHT
-            self.besides.append(grid[self.row][self.col + 1])
+            self.beside.append(grid[self.row][self.col + 1])
 
         if self.col > 0 and not grid[self.row][self.col - 1].is_wall(): # LEFT
-            self.besides.append(grid[self.row][self.col - 1])
-
+            self.beside.append(grid[self.row][self.col - 1])
+    
     def __lt__(self, other):
-        return False
+	    return False
+
+#the h() score of the algo
+def h(pone, ptwo):
+    x1, y1 = pone
+    x2, y2 = ptwo
+    return abs(x1 - x2) + abs(y1 - y2)
 
 
-def h(p1, p2):
-	x1, y1 = p1
-	x2, y2 = p2
-	return abs(x1 - x2) + abs(y1 - y2)
-
-
-def reconstruct_path(prev, current, draw):
-	while current in prev:
-		current = prev[current]
+def reconstruct_path(came_from, current, draw):
+	while current in came_from:
+		current = came_from[current]
 		current.make_path()
 		draw()
 
-
 def astar(draw, grid, start, end):
-	count = 0
-	openlist = PriorityQueue()
-	openlist.put((0, count, start))
-	prev = {}
-	g = {spot: float("inf") for row in grid for spot in row}
-	g[start] = 0
-	f = {spot: float("inf") for row in grid for spot in row}
-	f[start] = h(start.get_pos(), end.get_pos())
-	open_hash = {start}
+    count = 0
+    openlist = PriorityQueue()
+    openlist.put((0, count, start))
+    prev = {}
+    g = {spot: float("inf") for row in grid for spot in row}
+    g[start] = 0
+    f = {spot: float("inf") for row in grid for spot in row}
+    f[start] = h(start.get_pos(), end.get_pos())
+    print (start.get_pos())
+    open_hash = {start}
 
-	while not openlist.empty():
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				pygame.quit()
+    while not openlist.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        
+        current = openlist.get()[2]
+        open_hash.remove(current)
 
-		current = openlist.get()[2]
-		print (current)
-		open_hash.remove(current)
+        if current == end:
+            print ('gamex')
+            reconstruct_path(prev, end, draw)
+            end.make_end()
+            return True
+        
+        for neighbor in current.beside:
+            temp_g = g[current] + 1
+            print (g[current])
 
-		if current == end:
-			reconstruct_path(prev, end, draw)
-			end.make_end()
-			return True
+            if temp_g < g[current]:
+                prev[neighbor] = current
+                g[neighbor] = temp_g
+                f[neighbor] = temp_g + h(neighbor.get_pos(), end.get_pos())
+                if neighbor not in open_hash:
+                    print("hu")
+                    count += 1
+                    openlist.put((f[neighbor], count, neighbor))
+                    open_hash.add(neighbor)
+                    neighbor.make_open()
+        
+        draw()
 
-		for neighbor in current.besides:
-			temp_g_score = g[current] + 1
+        if current != start:
+           current.make_closed()
 
-			if temp_g_score < g[neighbor]:
-				prev[neighbor] = current
-				g[neighbor] = temp_g_score
-				f[neighbor] = temp_g_score + h(neighbor.get_pos(), end.get_pos())
-				if neighbor not in open_hash:
-					count += 1
-					openlist.put((f[neighbor], count, neighbor))
-					open_hash.add(neighbor)
-					neighbor.make_open()
-
-		draw()
-
-		if current != start:
-			current.make_closed()
-
-	return False
+    return False
 
 
 #draw the grid
@@ -280,3 +278,4 @@ while running:
 
                 astar(lambda: draw(screen, matrix, rows, width), matrix, start, end)
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
