@@ -11,34 +11,170 @@ from queue import PriorityQueue
 #(width, height)
 screen = pygame.display.set_mode((500,500))
 width = 500
-height = 500
+rows = 50
 squaresize = 10
 white = (200, 200, 200)
 green = (0, 255, 0)
+purple = (128, 0, 128)
 red = (255, 0, 0)
-start = (0,0)
-end = (0,0)
+blue = (0,0,255)
+gray = (100,100,100)
+black = (0,0,0)
+yellow = (255,255,0)
 
-#~~~~~~~~~creating a grid~~~~~~~~~~~
-#creating a 2d array for each spot on the grid
-rect_map = {}
-rect_matrix = []
-
-for rows in range(50):
-    twodgrid = []
-    for columns in range(50):
-        twodgrid.append(pygame.Rect((columns * squaresize, rows * squaresize), (squaresize, squaresize)))
-        rect_map[(columns, rows)] = 1
-    rect_matrix.append(twodgrid)
+class Squares:
+    def __init__(self, row, col, width, total_rows):
+        self.row = row
+        self.col = col
+        self.x = row * width
+        self.y = col * width
+        self.color = black #controls background color
+        self.besides = []
+        self.width = width
+        self.total_rows = total_rows
     
-#~~~~~~~~~Blocks~~~~~~~~~
-def placeblock(x, y):
-    start = (x,y) #custom cooridnates use () brackets
-    rect_map[start] = 0
+    def get_pos(self):
+        return self.row, self.col
+    
+    def is_wall(self):
+        return self.color == white
 
-def placeend(x2, y2): 
-    end = (x2, y2)
-    rect_map[end] = 0
+    def make_wall(self):
+        self.color = white
+    
+    def make_start(self):
+        self.color = green
+    
+    def make_end(self):
+        self.color = red
+    
+    def make_open(self):
+        self.color = purple
+
+    def make_closed(self):
+        self.color = blue
+
+    def make_path(self):
+        self.color = yellow
+    
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.width))
+    
+    def update_neighbors(self, grid):
+        self.besides = []
+        if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_wall(): # DOWN
+            self.besides.append(grid[self.row + 1][self.col])
+
+        if self.row > 0 and not grid[self.row - 1][self.col].is_wall(): # UP
+            self.besides.append(grid[self.row - 1][self.col])
+
+        if self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_wall(): # RIGHT
+            self.besides.append(grid[self.row][self.col + 1])
+
+        if self.col > 0 and not grid[self.row][self.col - 1].is_wall(): # LEFT
+            self.besides.append(grid[self.row][self.col - 1])
+
+    def __lt__(self, other):
+        return False
+
+
+def h(p1, p2):
+	x1, y1 = p1
+	x2, y2 = p2
+	return abs(x1 - x2) + abs(y1 - y2)
+
+
+def reconstruct_path(prev, current, draw):
+	while current in prev:
+		current = prev[current]
+		current.make_path()
+		draw()
+
+
+def astar(draw, grid, start, end):
+	count = 0
+	openlist = PriorityQueue()
+	openlist.put((0, count, start))
+	prev = {}
+	g = {spot: float("inf") for row in grid for spot in row}
+	g[start] = 0
+	f = {spot: float("inf") for row in grid for spot in row}
+	f[start] = h(start.get_pos(), end.get_pos())
+	open_hash = {start}
+
+	while not openlist.empty():
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+
+		current = openlist.get()[2]
+		print (current)
+		open_hash.remove(current)
+
+		if current == end:
+			reconstruct_path(prev, end, draw)
+			end.make_end()
+			return True
+
+		for neighbor in current.besides:
+			temp_g_score = g[current] + 1
+
+			if temp_g_score < g[neighbor]:
+				prev[neighbor] = current
+				g[neighbor] = temp_g_score
+				f[neighbor] = temp_g_score + h(neighbor.get_pos(), end.get_pos())
+				if neighbor not in open_hash:
+					count += 1
+					openlist.put((f[neighbor], count, neighbor))
+					open_hash.add(neighbor)
+					neighbor.make_open()
+
+		draw()
+
+		if current != start:
+			current.make_closed()
+
+	return False
+
+
+#draw the grid
+def grid(screen, rows, width):
+    space = width // rows
+    for row in range(rows):
+        pygame.draw.line(screen, gray, (0, row * space), (width, row * space)) #pygame.draw.line(grid, color, start, end, width)
+        for columns in range(rows):
+            pygame.draw.line(screen, gray, (columns * space, 0), (columns * space, width))
+
+#make spots for algo later on
+def make_spots(rows, width):
+	matrix = []
+	gap = width // rows
+	for i in range(rows):
+		matrix.append([])
+		for j in range(rows):
+			spot = Squares(i, j, gap, rows)
+			matrix[i].append(spot)
+
+	return matrix
+
+#get usable coor
+def placeof(cor, rows, width):
+    space = width//rows
+    y, x = cor 
+    
+    row = y // space
+    col = x // space
+
+    return row, col
+
+def draw(screen, dis, rows, width):
+    screen.fill(black)
+
+    for row in dis:
+        for spot in row:
+            spot.draw(screen)
+    grid(screen, rows, width)
+    pygame.display.update()
 
 #~~~~~~~~~Widget~~~~~~~~~
 root = Tk() 
@@ -66,16 +202,12 @@ a2.grid(column = 5, row = 1)
 
 def choice(): #function
     choice1 = a1.get().split(',')
-    print (choice1[1])
     start = (int(choice1[0]),int(choice1[1]))
-    #root.quit()
     return (start)
 
 def choice2():
     choice2 = a2.get().split(',')
-    print (choice2[0])
     end = (int(choice2[0]), int(choice2[1]))
-    #root.quit()
     return (end)
 
 def algochoice():
@@ -95,6 +227,7 @@ button3.grid(column = 4, row = 7)
 root.mainloop()
 bruh = choice() #takes the variable from the function
 bruh2 = choice2()
+
 if bruh[0] == bruh2[0] and bruh[1] == bruh2[1]:
     bruht = list(bruh2)
     if bruht[0] > 39:
@@ -107,20 +240,10 @@ if bruh[0] == bruh2[0] and bruh[1] == bruh2[1]:
         bruht[0] += 10
         bruht[1] += 10
         bruh2 = tuple(bruht)
-#~~~~~~~~~Widget 2~~~~~~~~~
 
+#~~~~~~~~~main pygame screen~~~~~~~~
 
-#~~~~~~~~~algo~~~~~~~~~
-openlist = []
-closedlist = []
-#openlist = openlist.head
-
-def astar():
-    while len(openlist) > 0:
-        smallestindex = bruh
-        
-
-#~~~~~~~~~main pygame screen~~~~~~~~~
+matrix = make_spots(rows, width)
 running = True
 # game loop
 destroyed = False
@@ -128,34 +251,31 @@ while running:
     while destroyed == False:
         root.destroy()
         destroyed = True
-    pygame.display.flip() #displays the screen
-    placeblock(bruh[0], bruh[1]) #places start block
-    placeend(bruh2[0], bruh2[1]) # places end block
+    #pygame.display.flip() #displays the screen
+    draw(screen, matrix, rows, width)
     ev = pygame.event.get()
+    #placing the start and end blocks
+    bruhx, bruhy = placeof(bruh, rows, width)
+    bruh2x, bruh2y = placeof(bruh2, rows, width)
+    start = matrix[bruhx][bruhy]
+    end = matrix[bruh2x][bruh2y]
+    start.make_start()
+    end.make_end()
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     for event in ev:
         if event.type == pygame.QUIT:
             running = False
             
         if pygame.mouse.get_pressed()[0]: #press mouse
-            pos = pygame.mouse.get_pos()#gets the position of click
-            gridpos = pos[0] // squaresize, pos[1] // squaresize
-            if rect_map[gridpos] == 1:
-                rect_map[gridpos] = 0
-            else:
-                rect_map[gridpos] = 1
+            cor = pygame.mouse.get_pos()#gets the position of click
+            row, col = placeof(cor, rows, width)
+            place = matrix[row][col]
+            place.make_wall()
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and start and end:
+                for row in matrix:
+                    for spot in row:
+                        spot.update_neighbors(matrix)
 
-
-    screen.fill((0,0,0))
-
-    for i, ii in zip(rect_matrix, range(len(rect_matrix))):
-        for j, jj  in zip(i, range(len(i))):
-            if jj == bruh[0] and ii == bruh[1]:
-                pygame.draw.rect(screen, green, j, rect_map[(jj, ii)]) #sets colour of start block to green
-            elif jj == bruh2[0] and ii == bruh2[1]:
-                pygame.draw.rect(screen, red, j, rect_map[(jj, ii)]) #sets colour of end block to red
-            else:     
-                pygame.draw.rect(screen, (100,100,100), j, rect_map[(jj, ii)]) #sets colours of blocks to gray
-
-    pygame.display.update()
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                astar(lambda: draw(screen, matrix, rows, width), matrix, start, end)
