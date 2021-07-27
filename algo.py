@@ -279,3 +279,4 @@ while running:
                         spot.update_neighbors(matrix)
 
                 astar(lambda: draw(screen, matrix, rows, width), matrix, start, end)
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
