@@ -136,6 +136,48 @@ def astar(draw, grid, start, end):
 
 	return False
 
+#dijkstras algorithm
+def dijkstra(draw, grid, start, end):
+    count = 0
+    distance = {spot: float("inf") for row in grid for spot in row} #set all nodes as infinity distance
+    distance[start] = 0 #set start node as 0
+    prev = {}
+    
+    openlist = PriorityQueue()
+    openlist.put((count, start))
+
+    openhash = {start}
+
+
+    while not openlist.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        u = openlist.get()[1]
+        openhash.remove(u)
+
+        if u == end: #if the current node is the end node
+            reconstruct_path(prev, end, draw)
+            end.make_end()
+            return True
+
+        for neighbor in u.besides:
+            alt = distance[u] + h(u.get_pos(), neighbor.get_pos())
+            if alt < distance[neighbor]:
+                distance[neighbor] = alt
+                prev[neighbor] = u
+                if neighbor not in openhash: 
+                    count += 1
+                    openlist.put((count, neighbor))
+                    openhash.add(neighbor)
+                    neighbor.make_open()
+        draw()
+
+        if u != start:
+            u.make_closed()
+    
+    return False
 
 #draw the grid
 def grid(screen, rows, width):
