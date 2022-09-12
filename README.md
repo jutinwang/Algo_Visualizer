@@ -1,2 +1,2 @@
 # Algo_Visualizer
-Way for me to learn algorithms and GUI
+Way for me to learn algorithms and GUI.
